@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap" rel="stylesheet">
+    <script src="./fontawesome-free-6.0.0-web/js/all.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- APP HEADER -->
+        <div class="dashboard">
+            <span class="dashboard__subtitle">Now Playing</span>
+
+            <h1 class="dashboard__title">Song Name</h1>
+
+            <div class="dashboard__img-container">
+                <img src="./images/thien-dang.jpeg" alt="thien dang" class="dashboard__img">
+            </div>
+
+            <div class="dashboard__btns-container">
+                <button class="control-btn dashboard__replay-btn">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+
+                <button class="control-btn dashboard__prev-btn">
+                    <i class="fa-solid fa-backward-step"></i>
+                </button>
+
+                <div class="dashboard__play-and-pause">
+                    <button class="control-btn dashboard__play-btn active">
+                        <i class="fa-solid fa-circle-play"></i>
+                    </button>
+
+                    <button class="control-btn dashboard__pause-btn">
+                        <i class="fa-solid fa-circle-pause"></i>
+                    </button>
+                </div>
+                
+                <button class="control-btn dashboard__next-btn">
+                    <i class="fa-solid fa-forward-step"></i>
+                </button>
+
+                <button class="control-btn dashboard__shuffle-btn">
+                    <i class="fa-solid fa-shuffle"></i>
+                </button>
+            </div>
+            <input type="range" min="0" max="100" value="0" class="dashboard__slider" id="play-time">
+        </div>
+        <ul class="playlist">
+            <div class="song">
+                <img src="./images/thien-dang.jpeg" alt="thien dang" class="song__thumbnail">
+
+                <div class="song__body">
+                    <h2 class="song__name">thien dang</h2>
+                    <p class="song__singer">Wowwy & Loli</p>
+                </div>
+
+                <button class="song__ellipsis">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+            </div>
+
+            <div class="song">
+                <img src="./images/hoa-hai-duong.jpeg" alt="hoa hai duong" class="song__thumbnail">
+
+                <div class="song__body">
+                    <h2 class="song__name">hoa hai duong</h2>
+                    <p class="song__singer">Jack</p>
+                </div>
+
+                <button class="song__ellipsis">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+            </div>
+
+            <div class="song">
+                <img src="./images/roi-toi-luon.jpeg" alt="thien dang" class="song__thumbnail">
+
+                <div class="song__body">
+                    <h2 class="song__name">roi toi luon</h2>
+                    <p class="song__singer">Nal</p>
+                </div>
+
+                <button class="song__ellipsis">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+            </div>
+
+            <div class="song">
+                <img src="./images/sau-hong-gai.jpeg" alt="sau hong gai" class="song__thumbnail">
+
+                <div class="song__body">
+                    <h2 class="song__name">Sau Hong Gai</h2>
+                    <p class="song__singer">G5R Squad</p>
+                </div>
+
+                <button class="song__ellipsis">
+                    <i class="fa-solid fa-ellipsis"></i>
+                </button>
+            </div>
+            
+        </ul>
+    </div>
+</body>
+</html>
