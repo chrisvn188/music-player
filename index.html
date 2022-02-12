@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="app">
-        <!-- APP HEADER -->
+        <!-- **************** APP DASHBOARD **************** -->
         <div class="dashboard">
             <span class="dashboard__subtitle">Now Playing</span>
 
@@ -48,62 +48,19 @@
                     <i class="fa-solid fa-shuffle"></i>
                 </button>
             </div>
+
             <input type="range" min="0" max="100" value="0" class="dashboard__slider" id="play-time">
+
+            <audio class="dashboard__audio" controls autoplay>
+                <source src="./audio/roi-toi-luon.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
         </div>
-        <ul class="playlist">
-            <div class="song">
-                <img src="./images/thien-dang.jpeg" alt="thien dang" class="song__thumbnail">
 
-                <div class="song__body">
-                    <h2 class="song__name">thien dang</h2>
-                    <p class="song__singer">Wowwy & Loli</p>
-                </div>
-
-                <button class="song__ellipsis">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </button>
-            </div>
-
-            <div class="song">
-                <img src="./images/hoa-hai-duong.jpeg" alt="hoa hai duong" class="song__thumbnail">
-
-                <div class="song__body">
-                    <h2 class="song__name">hoa hai duong</h2>
-                    <p class="song__singer">Jack</p>
-                </div>
-
-                <button class="song__ellipsis">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </button>
-            </div>
-
-            <div class="song">
-                <img src="./images/roi-toi-luon.jpeg" alt="thien dang" class="song__thumbnail">
-
-                <div class="song__body">
-                    <h2 class="song__name">roi toi luon</h2>
-                    <p class="song__singer">Nal</p>
-                </div>
-
-                <button class="song__ellipsis">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </button>
-            </div>
-
-            <div class="song">
-                <img src="./images/sau-hong-gai.jpeg" alt="sau hong gai" class="song__thumbnail">
-
-                <div class="song__body">
-                    <h2 class="song__name">Sau Hong Gai</h2>
-                    <p class="song__singer">G5R Squad</p>
-                </div>
-
-                <button class="song__ellipsis">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </button>
-            </div>
-            
-        </ul>
+        <!-- **************** APP PLAYLIST **************** -->
+        <ul class="playlist"></ul>
     </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
