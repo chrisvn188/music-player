@@ -124,16 +124,12 @@ const app = {
 
         // [SCROLL TOP] --> Make img width change
         const initialImgWidth = diskImg.offsetWidth
-        function scrollTop(){
+        document.onscroll = function (){
             const scrollTop = window.scrollY || document.documentElement.scrollTop
-            // fixed the UI bug when scroll too fast
-            const newImgWidth = initialImgWidth - scrollTop < 0 
-                                                            ? 0 
-                                                            : initialImgWidth - scrollTop
-            diskImg.style.width = newImgWidth + 'px'
+            const newImgWidth = initialImgWidth - scrollTop
+            diskImg.style.width = newImgWidth > 0 ? newImgWidth + 'px' : 0
             diskImg.style.opacity = newImgWidth / initialImgWidth
         }
-        document.onscroll = scrollTop
 
 
         // [HANDLE PLAY WHEN CLICK]
