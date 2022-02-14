@@ -1,221 +1,314 @@
-'use strict';
+/** 
+* The directive tells browser run Javascript under strict mode.
+* Declare on top of the page, above every lines of code except comments
+*/
+'use strict'; 
 
 const $ = document.querySelector.bind(document)
 const $$ = document.querySelectorAll.bind(document)
+const MUSIC_PLAYER_STORAGE = 'musicStorage'
 
-const player = $('.player');
-const playList = $('.playlist');
-const imageContainer = $('.dashboard__img-container')
-const songImg = $('.dashboard__img')
-const songTitle = $('.dashboard__title')
-const playBtn = $('.dashboard__toggle-play-pause')
-const nextBtn = $('.dashboard__next-btn')
-const prevBtn = $('.dashboard__prev-btn')
-const replayBtn = $('.dashboard__replay-btn')
-const autoNextSongBtn = $('.dashboard__shuffle-btn')
-const timeSeekingSlider = $('.dashboard__slider')
-const audio = $('.dashboard__audio')
+const player = $('.js-player')
+const playList = $('.js-playlist')
+const diskImg = $('.js-img')
+const title = $('.js-title')
+const playBtn = $('.js-play')
+const nextBtn = $('.js-next')
+const prevBtn = $('.js-prev')
+const replayBtn = $('.js-replay')
+const randomBtn = $('.js-random')
+const timeRange = $('.js-time')
+const audio = $('.js-audio')
+
 
 const app = {
-    currentIndex:  0,
-    canPlayThrough: false,
-    canReplay: false,
+    currentSongIndex: 0,
+    playedSongIndexs: [],
+    isPlaying: false,
+    isRandom: false,
+    isReplay:false,
+    config: JSON.parse(localStorage.getItem(MUSIC_PLAYER_STORAGE)) || {},
     songs: [
         {
             title:'Roi Toi Luon',
             singer:'Nal',
             imgUrl:'./images/roi-toi-luon.jpeg',
-            audio:'./audio/roi-toi-luon.mp3'
+            audioSrc:'./audio/roi-toi-luon.mp3'
         },
 
         {
             title:'Thien Dang',
             singer:'Wowwy & Jolipoli',
             imgUrl:'./images/thien-dang.jpeg',
-            audio:'./audio/thien-dang.mp3'
+            audioSrc:'./audio/thien-dang.mp3'
         },
 
         {
             title:'Hoa Hai Duong',
             singer:'Jack',
             imgUrl:'./images/hoa-hai-duong.jpeg',
-            audio:'./audio/hoa-hai-duong.mp3'
+            audioSrc:'./audio/hoa-hai-duong.mp3'
         },
     
         {
             title:'Sau Hong Gai',
             singer:'G5R Squad',
             imgUrl:'./images/sau-hong-gai.jpeg',
-            audio:'./audio/sau-hong-gai.mp3'
+            audioSrc:'./audio/sau-hong-gai.mp3'
         },
     
         {
             title:'Thuong Nhau Toi Ben',
             singer:'Nal',
             imgUrl:'./images/thuong-nhau-toi-ben.jpeg',
-            audio:'./audio/thuong-nhau-toi-ben.mp3'
+            audioSrc:'./audio/thuong-nhau-toi-ben.mp3'
         },
     
         {
             title:'Khue Moc Lang',
             singer:'Huong Ly',
             imgUrl:'./images/khue-moc-lang.jpeg',
-            audio:'./audio/khue-moc-lang.mp3'
+            audioSrc:'./audio/khue-moc-lang.mp3'
         }
     ],
-    
-    loadCurrentSong(){
-        const currentSong = this.songs[this.currentIndex]
-        songImg.src = currentSong.imgUrl
-        songTitle.textContent = currentSong.title
-        audio.src = currentSong.audio
-        audio.play()
+    /****************** DEFINE PROPERTIES ******************/
+    defineProperties(){
+        Object.defineProperty(this, 'currentSong', {
+            get() {
+                return this.songs[this.currentSongIndex]
+            }
+        })
+
+        Object.defineProperty(this, 'rotate360', {
+            get() {
+                return {transform: 'rotate(360deg)'}
+            }
+        })
+
+        Object.defineProperty(this, 'timing10Sec', {
+            get() {
+                return {duration:10000, iterations:Infinity}
+            }
+        })
+    },
+    /****************** SET CONFIG ******************/
+    setConfig(key, value) {
+        this.config[key] = value
+        localStorage.setItem(MUSIC_PLAYER_STORAGE, JSON.stringify(this.config))
+    },
+
+
+    /****************** LOAD CONFIG ******************/
+    loadConfig() {
+        this.isRandom = this.config.isRandom
+        this.isReplay = this.config.isReplay
+    },
+
+
+    /****************** LOAD CURRENT SONG ******************/
+    loadCurrentSong() {
+        title.textContent = this.currentSong.title
+        diskImg.src = this.currentSong.imgUrl
+        audio.src = this.currentSong.audioSrc
     },
 
     /****************** HANDLE EVENTS ******************/
-    handleEvents(){
-        // handle scroll event on document
-        const initialImgWidth = imageContainer.offsetWidth
-        document.addEventListener('scroll', function(){
+    handleEvents() {
+        // keep the function context, in this case: app object
+        const that = this
+
+        // [IMG ROTATE ANIMATION]
+        const imgAnimation = diskImg.animate(that.rotate360, that.timing10Sec)
+        imgAnimation.pause()
+
+
+        // [SCROLL TOP] --> Make img width change
+        const initialImgWidth = diskImg.offsetWidth
+        function scrollTop(){
             const scrollTop = window.scrollY || document.documentElement.scrollTop
-            const newWidth = initialImgWidth - scrollTop
-
-            imageContainer.style.width = `${newWidth}px`
-            imageContainer.style.opacity = newWidth / initialImgWidth
-        })
-
-
-        // handle play and pause audio
-        playBtn.addEventListener('click', (e) => {
-            if (e.target.closest('.icon-play')) {
-                audio.play()
-            } else{    
-                audio.pause()
-            }   
-        })
+            // fixed the UI bug when scroll too fast
+            const newImgWidth = initialImgWidth - scrollTop < 0 
+                                                            ? 0 
+                                                            : initialImgWidth - scrollTop
+            diskImg.style.width = newImgWidth + 'px'
+            diskImg.style.opacity = newImgWidth / initialImgWidth
+        }
+        document.onscroll = scrollTop
 
 
-        // display play btn
-        audio.addEventListener('play', () => {
+        // [HANDLE PLAY WHEN CLICK]
+        playBtn.onclick = function(){  
+            that.isPlaying = !that.isPlaying
+            that.isPlaying ? audio.play() : audio.pause()  
+        }
+
+
+        // [PLAY EVENT ON AUDIO]
+        audio.onplay = function() {
             player.classList.add('playing')
-        })
+            imgAnimation.play()
+        }
 
 
-         // display pause btn
-         audio.addEventListener('pause', () => {
+        // [PAUSE EVENT ON AUDIO]
+        audio.onpause = function() {
             player.classList.remove('playing')
-        })
+            imgAnimation.pause()
+        }
 
 
-        // handle time update
-        audio.addEventListener('timeupdate', () => {
+        // [TIMEUPDATE EVENT ON AUDIO]
+        audio.ontimeupdate = function(){
             if(audio.duration > 0){
-                timeSeekingSlider.value = audio.currentTime / audio.duration * 100
+                const currentPercentage = audio.currentTime / audio.duration * 100
+                timeRange.value = currentPercentage
             }
-        })
+        }
 
+        // [SEEK TIME POSITION]
+        timeRange.oninput = function() {
+            const timePercentage = timeRange.value / 100
+            audio.currentTime = timePercentage * audio.duration
+        }
 
-        // handle slider value change
-        timeSeekingSlider.addEventListener('input', () => {
-            audio.currentTime = timeSeekingSlider.value * audio.duration / 100
-        })
-
-
-        // handle next song
-        nextBtn.addEventListener('click', () => {
-            if (this.currentIndex < this.songs.length - 1) {
-                this.currentIndex++
-            } else {
-                this.currentIndex = 0
+        
+        function nextSong(){
+            that.currentSongIndex++
+            if(that.currentSongIndex > that.songs.length - 1) {
+                that.currentSongIndex = 0
             }
-            this.loadCurrentSong()
-        })
+        }
 
 
-         // handle prev song
-        prevBtn.addEventListener('click', () => {
-            if (this.currentIndex === 0) {
-                this.currentIndex = this.songs.length - 1
-            } else {
-                this.currentIndex--
+        function prevSong(){
+            that.currentSongIndex--
+            if(that.currentSongIndex < 0) {
+                that.currentSongIndex = that.songs.length - 1
             }
+        }
 
-            this.loadCurrentSong()
-        })
 
-        // handle replay
-        replayBtn.addEventListener('click', () => {
+        function randomSong(){
+            if (that.playedSongIndexs.length === that.songs.length - 1) {
+                that.playedSongIndexs = []
+            }
+            do {
+                var randomIndex = Math.floor(Math.random() * that.songs.length)
+            } while (randomIndex === that.currentSongIndex 
+                                        || that.playedSongIndexs.includes(randomIndex))
+            
+            that.currentSongIndex = randomIndex
+            that.playedSongIndexs.push(randomIndex) // store song indexs that are played already in an array
+
+        }
+
+        // [NEXT CLICK EVENT]
+        nextBtn.onclick = function() {
+            console.log(that.isRandom)
+            that.isRandom ? randomSong() : nextSong()
+            that.loadCurrentSong()
+            audio.play()
+            that.render()
+            setTimeout(function () {
+                $('.song.active').scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+            },300)
+            
+        }
+
+        // [PREV CLICK EVENT]
+        prevBtn.onclick = function() {
+            that.isRandom ? randomSong() : prevSong()
+            that.loadCurrentSong()
+            audio.play()
+            that.render()
+            setTimeout(function () {
+                $('.song.active').scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
+            },300)
+        }
+
+        // [RANDOM SONG WHEN RANDOM BTN ACTIVE]
+        randomBtn.onclick = function() {
+            randomBtn.classList.toggle('active')
+            that.isRandom = !that.isRandom 
+            that.setConfig('isRandom', that.isRandom)
+        }
+
+
+        // [REPLAY SONG WHEN REPLAY BTN ACTIVE]
+        replayBtn.onclick = function() {
             replayBtn.classList.toggle('active')
-            autoNextSongBtn.classList.remove('active')
-            if (this.canReplay) {
-                this.canReplay = false           
-            } else {
-                this.canReplay = true
-                this.canPlayThrough = false
-            }
-            audio.loop = this.canReplay
-        })
+            that.isReplay = !that.isReplay
+            that.setConfig('isReplay', that.isReplay)
+        }
 
-        // handle playing next song automatically
-        autoNextSongBtn.addEventListener('click', () => {
-            autoNextSongBtn.classList.toggle('active')
-            replayBtn.classList.remove('active')
-            if (this.canPlayThrough) {
-                this.canPlayThrough = false           
-            } else {
-                this.canPlayThrough = true
-                this.canReplay = false
-                audio.loop = false
-            }
-        })
+        // [AUDIO ENDED EVENT]
+        audio.onended = function() {
+            that.isReplay ? audio.play() : nextBtn.click()
+        }
 
-        // handle audio ended
-        audio.addEventListener('ended', () => {
-            // if the current song is the last, go back to the first song
-            if (this.currentIndex < this.songs.length - 1  
-                && this.canPlayThrough) {   
-                this.currentIndex++
+        // [ACTIVE SONG BY CLICK]
+        playList.onclick = function(e) {
+            const songNode = e.target.closest('.song.active')
+            const ellipsis = e.target.closest('.ellipsis')
+            const clickedSong = e.target.closest('.song')
+            if(!songNode && !ellipsis) {
+                playList.querySelector('.song.active').classList.remove('active')
+                clickedSong.classList.add('active')
+                that.currentSongIndex = clickedSong.dataset.index
+                that.loadCurrentSong()
+                audio.play()
             }
-            else {
-                this.currentIndex = 0
-            }
-            this.loadCurrentSong()
-        })
-
+        }
     },
 
     /****************** RENDER SONGS ******************/
-    renderSongs(){
-
-        const htmls = this.songs.map(s => {
+    render() {
+        const that = this
+        const htmls = this.songs.map(function(song, index) {
             return `
-            <li class="song">
-                <img src="${s.imgUrl}" alt="${s.title}" class="song__thumbnail">
-
-                <div class="song__body">
-                    <h2 class="song__name">${s.title}</h2>
-                    <p class="song__singer">${s.singer}</p>
-                </div>
-
-                <button class="song__ellipsis">
-                    <i class="fa-solid fa-ellipsis"></i>
-                </button>
-            </li>
+                <li class="song ${index === that.currentSongIndex ? 'active' : ''}" data-index="${index}">
+                    <img class="song__thumbnail" src="${song.imgUrl}" all="${song.title}">
+                    <div class="song__body">
+                        <h2 class="song__title">${song.title}</h2>
+                        <p class="song__singer">${song.singer}</p>
+                    </div>
+                    <button class="ellipsis">
+                        <i class="fa-solid fa-ellipsis"></i>
+                    </button>
+                </li>
             `
-        }).join('')
+        })
 
-        playList.innerHTML = htmls
-
+        playList.innerHTML = htmls.join('')
     },
 
     /****************** START ******************/
-    start(){
-        this.renderSongs()
+    start() {
+        // set configuration
+        this.loadConfig()
 
+        // define custom properties
+        this.defineProperties()
+
+        // render songs
+        this.render()
+
+        // load current song, default is 0
         this.loadCurrentSong()
 
+        // handle all events
         this.handleEvents()
+
+        // Default UI settings
+        if(this.isRandom){
+            randomBtn.classList.add('active')
+        }
+        if(this.isReplay){
+            replayBtn.classList.add('active')
+        }
+        
     }
 }
 
+// start application
 app.start()

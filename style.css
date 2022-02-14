@@ -89,7 +89,7 @@ button{
 .dashboard__img{
     width: 100%;
     border-radius: 50%;
-    /* border: 2px solid var(--color-light-yellow) */
+    box-shadow: 1px 1px 10px 1px rgba(249, 133, 255,.5);
 }
 
 .dashboard__btns-container{
@@ -169,7 +169,7 @@ button{
 
 .song.active{
     background-color: var(--color-tertiary);
-    color: var(--color-white);
+    color: var(--color-white-pink);
 }
 
 .song:hover{
@@ -193,7 +193,7 @@ button{
 
 .song.active .song__singer{
     font-weight: 300;
-    color: var(--color-secondary);
+    color: var(--color-white-pink);
 }
 
 
@@ -203,13 +203,13 @@ button{
     border-radius: 10px;
 }
 
-.song__ellipsis{
+.ellipsis{
     margin-left: auto;
     background-color: transparent;
     color: var(--color-secondary);
     font-size: 2.5rem;
 }
 
-.song.active .song__ellipsis{
-    color: var(--color-secondary)
+.song.active .ellipsis{
+    color: var(--color-white-pink)
 }
