@@ -204,14 +204,17 @@ const app = {
 
         // [NEXT CLICK EVENT]
         nextBtn.onclick = function() {
-            console.log(that.isRandom)
             that.isRandom ? randomSong() : nextSong()
             that.loadCurrentSong()
             audio.play()
             that.render()
             setTimeout(function () {
-                $('.song.active').scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-            },300)
+                $('.song.active').scrollIntoView({
+                    behavior: "smooth",
+                    block: "end", 
+                    inline: "nearest"
+                });
+            }, 300)
             
         }
 
@@ -222,8 +225,11 @@ const app = {
             audio.play()
             that.render()
             setTimeout(function () {
-                $('.song.active').scrollIntoView({behavior: "smooth", block: "end", inline: "nearest"});
-            },300)
+                $('.song.active').scrollIntoView({
+                    behavior: "smooth", 
+                    block: "end", 
+                    inline: "nearest"});
+            }, 300)
         }
 
         // [RANDOM SONG WHEN RANDOM BTN ACTIVE]
